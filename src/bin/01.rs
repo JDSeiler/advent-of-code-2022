@@ -1,6 +1,5 @@
 fn get_total_calories(input: &str) -> Vec<u32> {
     let mut accum = 0;
-    let running_max = 0;
     let mut all_totals: Vec<u32> = Vec::with_capacity(1000);
     input.split('\n').for_each(|row| {
         if row.is_empty() {
