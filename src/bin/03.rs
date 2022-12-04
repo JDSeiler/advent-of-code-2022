@@ -44,7 +44,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn part_two(input: &str) -> Option<u32> {
     // Removing this allocation could speed up the solution quite a bit.
-    // But `chunks` is not stabilizer on normal iterators yet, only on slices.
+    // But `chunks` is not stabilized on normal iterators yet, only on slices.
     let lines: Vec<&str> = input.lines().collect();
     let total_priority = lines.chunks(3).map(|group| {
         // Allocating and using all these HashSets could also be very slow.
