@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 pub fn part_one(input: &str) -> Option<u32> {
     let total_priority = input
         .lines()
@@ -44,53 +42,64 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut first: HashSet<char> = HashSet::with_capacity(75);
-    let mut second: HashSet<char> = HashSet::with_capacity(75);
-    let mut third: HashSet<char> = HashSet::with_capacity(75);
+    // These three arrays function like HashMaps
+    // "Does the character with byte-value X exist in the first rucksack"
+    let mut first: Vec<bool> = vec![false; 123];
+    let mut second: Vec<bool> = vec![false; 123];
+    let mut third: Vec<bool> = vec![false; 123];
 
-    // Removing this allocation could speed up the solution quite a bit.
-    // But `chunks` is not stabilized on normal iterators yet, only on slices.
     let lines: Vec<&str> = input.lines().collect();
     let total_priority = lines
         .chunks(3)
         .map(|group| {
-            // Allocating and using all these HashSets could also be very slow.
-            // But I'm not sure if there's actually a faster way, considering
-            // that in part_one I replaced a HashSet with binary search and it wasn't
-            // any faster.
-            group[0].chars().for_each(|c| { first.insert(c); });
-            group[1].chars().for_each(|c| { second.insert(c); });
-            group[2].chars().for_each(|c| { third.insert(c); });
+            group[0]
+                .as_bytes()
+                .iter()
+                .for_each(|c| first[*c as usize] = true);
+            group[1].as_bytes().iter().for_each(|c| {
+                second[*c as usize] = true;
+            });
+            group[2].as_bytes().iter().for_each(|c| {
+                third[*c as usize] = true;
+            });
 
-            // If anything it makes the solution very readable.
-            let mut answer: Option<char> = None;
-            for candidate in first.intersection(&second) {
-                if third.contains(candidate) {
-                    answer = Some(*candidate);
+            // We store the answer outside to avoid ownership issues.
+            // Clearing the vectors inside a loop is... rough.
+            let mut answer: Option<u8> = None;
+            let mut candidates: Vec<usize> = Vec::new();
+            for (c, &in_first) in first.iter().enumerate() {
+                if in_first && second[c] {
+                    candidates.push(c);
+                }
+            }
+            for candidate in candidates {
+                if third[candidate] {
+                    answer = Some(candidate as u8);
                     break;
                 }
             }
+
+            // Reset all the maps.
             first.clear();
+            first.resize(123, false);
             second.clear();
+            second.resize(123, false);
             third.clear();
-            
+            third.resize(123, false);
+
             answer.unwrap()
         })
         .map(|duplicate_item| {
-            // A final optimization for both parts would be to ditch iterators
-            // completely so that I can compute the sum as I'm calculating the
-            // priorities. I am assuming the final `sum` call at the end of this
-            // iterator chain is another pass over every element that could be
-            // avoided.
-
             // a-z => should map to 1-26
             // A-Z => should map to 27-52
 
             // Because capital letters come before lowercase letters in ASCII
             // We need two separate branches / two separate offsets.
             match duplicate_item {
-                'a'..='z' => duplicate_item as u32 - 96,
-                'A'..='Z' => duplicate_item as u32 - 38,
+                // a-z
+                97..=122 => duplicate_item as u32 - 96,
+                // A-Z
+                65..=90 => duplicate_item as u32 - 38,
                 _ => unreachable!(),
             }
         })
