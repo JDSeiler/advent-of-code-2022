@@ -1,4 +1,6 @@
 pub fn part_one(input: &str) -> Option<u32> {
+    let mut lookup: Vec<bool> = vec![false; 123];
+
     let total_priority = input
         .lines()
         .map(|rucksack| {
@@ -6,21 +8,20 @@ pub fn part_one(input: &str) -> Option<u32> {
             // Rucksack length will always be an even number
             let divide_at = rucksack.len() / 2;
             let (f, s) = rucksack.split_at(divide_at);
-            // I tried this "make an ordered slice of bytes and binary search"
-            // because I thought it'd be faster than a HashSet, but it's about the
-            // same if not slower.
-            let mut second = s.as_bytes().to_owned();
-            second.sort_unstable();
 
-            for item in f.as_bytes().iter() {
-                if second.binary_search(item).is_ok() {
-                    return *item;
+            s.as_bytes().iter().for_each(|c| lookup[*c as usize] = true);
+
+            let mut answer: Option<u8> = None;
+            for &item in f.as_bytes().iter() {
+                if lookup[item as usize] {
+                    answer = Some(item);
+                    break;
                 }
             }
-            // We will always find a duplicate, if we omit this `unreachable`
-            // then the compiler rightly asserts that this `map` will sometimes
-            // return () instead of u8.
-            unreachable!()
+            lookup.clear();
+            lookup.resize(123, false);
+
+            answer.unwrap()
         })
         .map(|duplicate_item| {
             // a-z => should map to 1-26
