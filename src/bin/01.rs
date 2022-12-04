@@ -1,14 +1,20 @@
 fn get_total_calories(input: &str) -> Vec<u32> {
     let mut accum = 0;
     let mut all_totals: Vec<u32> = Vec::with_capacity(1000);
-    input.split('\n').for_each(|row| {
+    let mut lines = input.lines().peekable();
+
+    // https://stackoverflow.com/a/67872822
+    while let Some(row) = lines.next() {
         if row.is_empty() {
             all_totals.push(accum);
             accum = 0;
+        } else if lines.peek().is_none() {
+            accum += row.parse::<u32>().unwrap();
+            all_totals.push(accum);
         } else {
             accum += row.parse::<u32>().unwrap();
         }
-    });
+    }
     all_totals
 }
 
