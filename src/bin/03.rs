@@ -44,6 +44,10 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
+    let mut first: HashSet<char> = HashSet::with_capacity(75);
+    let mut second: HashSet<char> = HashSet::with_capacity(75);
+    let mut third: HashSet<char> = HashSet::with_capacity(75);
+
     // Removing this allocation could speed up the solution quite a bit.
     // But `chunks` is not stabilized on normal iterators yet, only on slices.
     let lines: Vec<&str> = input.lines().collect();
@@ -54,18 +58,23 @@ pub fn part_two(input: &str) -> Option<u32> {
             // But I'm not sure if there's actually a faster way, considering
             // that in part_one I replaced a HashSet with binary search and it wasn't
             // any faster.
-            let first: HashSet<char> = HashSet::from_iter(group[0].chars());
-            let second: HashSet<char> = HashSet::from_iter(group[1].chars());
-            let third: HashSet<char> = HashSet::from_iter(group[2].chars());
+            group[0].chars().for_each(|c| { first.insert(c); });
+            group[1].chars().for_each(|c| { second.insert(c); });
+            group[2].chars().for_each(|c| { third.insert(c); });
 
             // If anything it makes the solution very readable.
+            let mut answer: Option<char> = None;
             for candidate in first.intersection(&second) {
                 if third.contains(candidate) {
-                    return *candidate;
+                    answer = Some(*candidate);
+                    break;
                 }
             }
-            // At least one candidate WILL occur in `third`
-            unreachable!();
+            first.clear();
+            second.clear();
+            third.clear();
+            
+            answer.unwrap()
         })
         .map(|duplicate_item| {
             // A final optimization for both parts would be to ditch iterators
