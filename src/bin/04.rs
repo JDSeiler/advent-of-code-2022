@@ -24,7 +24,7 @@ fn is_redundant(c: CleaningPair) -> u32 {
 
     // We return a number when a boolean would fit better so that we can easily
     // count up all the cases where is_redundant == true
-    return 0;
+    0
 }
 
 fn is_overlapping(c: CleaningPair) -> u32 {
@@ -42,10 +42,10 @@ fn is_overlapping(c: CleaningPair) -> u32 {
 
     // The two conditions are above are all of the cases where they ranges AREN'T
     // overlapping. So if they're not NOT overlapping... well... then they are...
-    return 1;
+    1
 }
 
-fn parse<'a>(input: &'a str) -> impl Iterator<Item = CleaningPair> + 'a {
+fn parse(input: &'_ str) -> impl Iterator<Item = CleaningPair> + '_ {
     input
         .lines()
         .map(|line| {

@@ -7,7 +7,7 @@ fn all_different(packet: &[char]) -> bool {
         }
         seen[c_idx] = true;
     }
-    return true;
+    true
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
