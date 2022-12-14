@@ -15,11 +15,11 @@ I'm pretty embarrassed and frustrated I didn't get this one in Rust, but sometim
 you don't perform as well as you want to, that's just life.
 */
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn part_one(_input: &str) -> Option<u32> {
     None
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(_input: &str) -> Option<u32> {
     None
 }
 
