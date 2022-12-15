@@ -70,7 +70,7 @@ fn count_visible(grid: Vec<Vec<u32>>) -> u32 {
     for i in 0..rows {
         for j in 0..cols {
             if i == 0 || i == rows-1 || j == 0 || j == cols-1 {
-                visible_trees = visible_trees + 1;
+                visible_trees += 1;
             } else {
                 let current_tree = grid[i][j];
                 let maxes = [
@@ -82,7 +82,7 @@ fn count_visible(grid: Vec<Vec<u32>>) -> u32 {
 
                 let visible_in_any_direction = maxes.iter().any(|&max| max < current_tree);
                 if visible_in_any_direction {
-                    visible_trees = visible_trees + 1;
+                    visible_trees += 1;
                 }
             }
         }
